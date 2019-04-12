@@ -111,68 +111,78 @@ namespace PMS.DAL
         }
 
 
-    public static List<ProductDTO> GetAllProducts()
+        public static ResponseResult GetAllProducts()
         {
             var query = "Select ProductId,Name, Price, PictureName, CreatedOn,CreatedBy, ModifiedOn, ModifiedBy, IsActive from dbo.Products Where IsActive = 1";
-
-            using (DBHelper helper = new DBHelper())
+            try
             {
-                var reader = helper.ExecuteReader(query);
-                List<ProductDTO> list = new List<ProductDTO>();
-
-                while (reader.Read())
+                using (DBHelper helper = new DBHelper())
                 {
-                    var dto = FillDTO(reader);
-                    if (dto != null)
-                    {
-                        list.Add(dto);
-                    }
-                }
+                    var reader = helper.ExecuteReader(query);
+                    List<ProductDTO> list = new List<ProductDTO>();
 
-                return list;
+                    while (reader.Read())
+                    {
+                        var dto = FillDTO(reader);
+                        if (dto != null)
+                        {
+                            list.Add(dto);
+                        }
+                    }
+
+                    return ResponseResult.GetSuccessObject(list);
+                }
+            }
+            catch(Exception exp)
+            {
+                return ResponseResult.GetErrorObject("Some Error has occured! " +exp);
             }
         }
 
-    public static ProductDTO GetProductById(int pid)
+        public static ResponseResult GetProductById(int pid)
         {
             var sqlQuery = "" ;
-
-            using (DBHelper helper = new DBHelper())
+            try
             {
-                sqlQuery = String.Format(@"Select * from dbo.Products Where ProductId='{0}'",pid);
-
-                SqlCommand cmd = new SqlCommand(sqlQuery);
-
-                //SqlParameter parm = new SqlParameter();
-                //parm.ParameterName = "k";
-                //parm.SqlDbType = System.Data.SqlDbType.VarChar;
-                //parm.Value = 1;
-                //cmd.Parameters.Add(parm);
-                
-                //cmd.Parameters.AddWithValue("id", pid);
-                
-                var reader = helper.ExecuteReader(sqlQuery);
-
-                ProductDTO dto = null;
-
-                if (reader.Read())
+                using (DBHelper helper = new DBHelper())
                 {
-                    dto = FillDTO(reader);
-                }
+                    sqlQuery = String.Format(@"Select * from dbo.Products Where ProductId='{0}'", pid);
 
-                return dto;
+                    SqlCommand cmd = new SqlCommand(sqlQuery);
+
+                    var reader = helper.ExecuteReader(sqlQuery);
+
+                    ProductDTO dto = null;
+
+                    if (reader.Read())
+                    {
+                        dto = FillDTO(reader);
+                    }
+
+                    return ResponseResult.GetSuccessObject(dto);
+                }
+            }
+            catch(Exception exp)
+            {
+                return ResponseResult.GetErrorObject();
             }
         }
 
-        public static int DeleteProduct(int id)
+        public static ResponseResult DeleteProduct(int id)
         {
-            String sqlQuery = String.Format(@"Update dbo.Products Set IsActive=0 Where ProductId={0}",id);
-
-            using (DBHelper helper = new DBHelper())
+            try
             {
-                SqlCommand cmd = new SqlCommand(sqlQuery);
-                
-                return helper.ExecuteQuery(sqlQuery);
+                String sqlQuery = String.Format(@"Update dbo.Products Set IsActive=0 Where ProductId={0}", id);
+
+                using (DBHelper helper = new DBHelper())
+                {
+                    SqlCommand cmd = new SqlCommand(sqlQuery);
+                    return ResponseResult.GetSuccessObject(helper.ExecuteQuery(sqlQuery));
+                }
+            }
+            catch(Exception exp)
+            {
+                return ResponseResult.GetErrorObject("Some Error has occured "+exp);
             }
         }
 
@@ -189,7 +199,6 @@ namespace PMS.DAL
                 dto.ModifiedOn = reader.GetDateTime(6);
             if (reader.GetValue(7) != DBNull.Value)
                 dto.ModifiedBy = reader.GetInt32(7);
-
             dto.IsActive = reader.GetBoolean(8);
             return dto;
         }

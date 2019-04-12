@@ -9,7 +9,7 @@ namespace PMS.Models
 {
     public class OrderBO
     {
-        public static int SaveOrder()
+        public static ResponseResult SaveOrder()
         {
             OrderDTO dto = new OrderDTO();
             dto.OrderNum = "ORD#1";
@@ -21,16 +21,16 @@ namespace PMS.Models
 
             return PMS.DAL.OrderDAO.SaveOrder(dto);
         }
-        public static OrderDTO GetOrderById(int oId)
+        public static ResponseResult GetOrderById(int oId)
         {
             return OrderDAO.GetOrderById(oId);
         }
-        public static List<OrderDTO> GetAllOrders()
+        public static ResponseResult GetAllOrders()
         {
             return OrderDAO.GetAllOrders();
         }
 
-        public static int DeleteOrder(int pid)
+        public static ResponseResult DeleteOrder(int pid)
         {
             return OrderDAO.DeleteOrder(pid);
         }

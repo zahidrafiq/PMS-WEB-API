@@ -9,7 +9,7 @@ namespace PMS.DAL
 {
     public class OrderDAO
     {
-        public static int SaveOrder(OrderDTO dto)
+        public static ResponseResult SaveOrder(OrderDTO dto)
         {
             using (DBHelper helper = new DBHelper())
             {
@@ -57,7 +57,7 @@ namespace PMS.DAL
 
                     //int a = helper.ExecuteQueryParm(cmd);
                     //return dto.ProductId;
-                    return 1;
+                    return ResponseResult.GetSuccessObject();
                 }
                 else
                 {
@@ -107,78 +107,88 @@ namespace PMS.DAL
                     parm.SqlDbType = System.Data.SqlDbType.Int;
                     parm.Value = 0;
                     cmd.Parameters.Add(parm);
-
-                    //int a = Convert.ToInt32 ( cmd.ExecuteScalar () );
+                    
                     Object obj = helper.ExecuteScalarParm(cmd);
-                    int a = Convert.ToInt32(obj);
-                    return a;
+                    int rv = Convert.ToInt32(obj);
+                    return ResponseResult.GetSuccessObject(rv);
                 }
             }
         }
 
 
-        public static List<OrderDTO> GetAllOrders()
+        public static ResponseResult GetAllOrders()
         {
-            var query = "Select OrderId,OrderNum, OrderBy, CreatedOn,IsPaid, TotalAmount,IsActive,OrderStatus from dbo.Orders Where IsActive = 1";
-
-            using (DBHelper helper = new DBHelper())
+            try
             {
-                var reader = helper.ExecuteReader(query);
-                List<OrderDTO> list = new List<OrderDTO>();
+                var query = "Select OrderId,OrderNum, OrderBy, CreatedOn,IsPaid, TotalAmount,IsActive,OrderStatus from dbo.Orders Where IsActive = 1";
 
-                while (reader.Read())
+                using (DBHelper helper = new DBHelper())
                 {
-                    var dto = FillDTO(reader);
-                    if (dto != null)
-                    {
-                        list.Add(dto);
-                    }
-                }
+                    var reader = helper.ExecuteReader(query);
+                    List<OrderDTO> list = new List<OrderDTO>();
 
-                return list;
+                    while (reader.Read())
+                    {
+                        var dto = FillDTO(reader);
+                        if (dto != null)
+                        {
+                            list.Add(dto);
+                        }
+                    }
+
+                    return ResponseResult.GetSuccessObject(list);
+                }
+            }
+            catch (Exception exp)
+            {
+                return ResponseResult.GetErrorObject("Some Error has occured! " + exp);
             }
         }
 
-        public static OrderDTO GetOrderById(int pid)
+        public static ResponseResult GetOrderById(int pid)
         {
             var sqlQuery = "";
-
-            using (DBHelper helper = new DBHelper())
+            try
             {
-                sqlQuery = String.Format(@"Select * from dbo.Orders Where OrderId='{0}'", pid);
-
-                SqlCommand cmd = new SqlCommand(sqlQuery);
-
-                //SqlParameter parm = new SqlParameter();
-                //parm.ParameterName = "k";
-                //parm.SqlDbType = System.Data.SqlDbType.VarChar;
-                //parm.Value = 1;
-                //cmd.Parameters.Add(parm);
-
-                //cmd.Parameters.AddWithValue("id", pid);
-
-                var reader = helper.ExecuteReader(sqlQuery);
-
-                OrderDTO dto = null;
-
-                if (reader.Read())
+                using (DBHelper helper = new DBHelper())
                 {
-                    dto = FillDTO(reader);
-                }
+                    sqlQuery = String.Format(@"Select * from dbo.Orders Where OrderId='{0}'", pid);
 
-                return dto;
+                    SqlCommand cmd = new SqlCommand(sqlQuery);
+                    
+                    var reader = helper.ExecuteReader(sqlQuery);
+
+                    OrderDTO dto = null;
+
+                    if (reader.Read())
+                    {
+                        dto = FillDTO(reader);
+                    }
+
+                    return ResponseResult.GetSuccessObject(dto);
+                }
+            }
+            catch (Exception exp)
+            {
+                return ResponseResult.GetErrorObject("Some error has occured!" + exp);
             }
         }
 
-        public static int DeleteOrder(int id)
+        public static ResponseResult DeleteOrder(int id)
         {
-            String sqlQuery = String.Format(@"Update dbo.Products Set IsActive=0 Where ProductId={0}", id);
-
-            using (DBHelper helper = new DBHelper())
+            String sqlQuery = String.Format(@"Update dbo.Orders Set IsActive=0 Where OrderId={0}", id);
+            try
             {
-                SqlCommand cmd = new SqlCommand(sqlQuery);
-
-                return helper.ExecuteQuery(sqlQuery);
+                using (DBHelper helper = new DBHelper())
+                {
+                    SqlCommand cmd = new SqlCommand(sqlQuery);
+                    var rv = helper.ExecuteQuery(sqlQuery);
+                    return ResponseResult.GetSuccessObject(rv);
+                }
+            }
+            catch(Exception exp)
+            {
+                return ResponseResult.GetErrorObject("Some error has occured!" + exp);
             }
         }
 

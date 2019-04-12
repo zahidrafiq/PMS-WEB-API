@@ -8,7 +8,7 @@ namespace PMS.Models
 {
     public class ProductBO
     {
-        public static int Save()
+        public static ResponseResult Save()
         {
             ProductDTO dto = new ProductDTO();
             dto.Name = "Burger";
@@ -17,19 +17,26 @@ namespace PMS.Models
             dto.IsActive = true;
             dto.CreatedBy = 1;
             dto.CreatedOn = DateTime.Now;
-
-            return PMS.DAL.ProductDAO.Save(dto);
+            try
+            {
+                return ResponseResult.GetSuccessObject( PMS.DAL.ProductDAO.Save(dto));
+            }
+            catch(Exception exp)
+            {
+                return ResponseResult.GetErrorObject("Some Error has been Occured! " + exp);
+            }
         }
-        public static ProductDTO GetProductById(int pid)
+
+        public static ResponseResult GetProductById(int pid)
         {
             return PMS.DAL.ProductDAO.GetProductById(pid);
         }
-        public static List<ProductDTO> GetAllProducts()
+        public static ResponseResult GetAllProducts()
         {
             return PMS.DAL.ProductDAO.GetAllProducts();
         }
 
-        public static int DeleteProduct(int pid)
+        public static ResponseResult DeleteProduct(int pid)
         {
             return PMS.DAL.ProductDAO.DeleteProduct(pid);
         }

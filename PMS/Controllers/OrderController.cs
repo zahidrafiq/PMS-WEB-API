@@ -1,4 +1,5 @@
-﻿using PMS.Models;
+﻿using PMS.Entity;
+using PMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,27 +12,31 @@ namespace PMS.Controllers
     public class OrderController : ApiController
     {
         [HttpGet]
-        public void Get()
+        public ResponseResult Get()
         {
             var a = OrderBO.GetAllOrders();
+            return a;
         }
 
         [HttpGet]
-        public void Save()
+        public ResponseResult Save()
         {
             var a = OrderBO.SaveOrder();
+            return a;
         }
 
         [HttpGet]
-        public void Del(int id)
+        public ResponseResult Del(int id)
         {
             var a = OrderBO.DeleteOrder(id);
+            return a;
         }
 
         [HttpGet]
-        public void GetById(int id)
+        public ResponseResult GetById(int id)
         {
             var a = OrderBO.GetOrderById(id);
+            return a;
         }
     }
 }

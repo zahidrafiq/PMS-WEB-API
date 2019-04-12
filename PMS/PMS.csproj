@@ -169,6 +169,7 @@
     <Compile Include="DAL\ProductDAO.cs" />
     <Compile Include="Entity\OrderDTO.cs" />
     <Compile Include="Entity\ProductDTO.cs" />
+    <Compile Include="Entity\ResponseResult.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

@@ -1,4 +1,5 @@
-﻿using PMS.Models;
+﻿using PMS.Entity;
+using PMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,35 +11,32 @@ namespace PMS.Controllers
 {
     public class ValuesController : ApiController
     {
-        
-        // GET api/values/5
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-        
         [HttpGet]
-        public void Get()
+        public ResponseResult Get()
         {
             var a = ProductBO.GetAllProducts();
+            return a;
         }
 
         [HttpGet]
-        public void Save()
+        public ResponseResult Save()
         {
             var a = ProductBO.Save();
+            return a;
         }
 
         [HttpGet]
-        public void Del(int id)
+        public ResponseResult Del(int id)
         {
             var a = ProductBO.DeleteProduct(id);
+            return a;
         }
 
         [HttpGet]
-        public void GetById(int id)
+        public ResponseResult GetById(int id)
         {
             var a = ProductBO.GetProductById(id);
+            return a;
         }
     }
 }
