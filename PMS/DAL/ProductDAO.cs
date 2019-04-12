@@ -168,6 +168,42 @@ namespace PMS.DAL
             }
         }
 
+
+        public static ResponseResult GetProductsByOrderId(int OrderId)
+        {
+            var sqlQuery = "";
+            try
+            {
+                using (DBHelper helper = new DBHelper())
+                {
+                    sqlQuery = String.Format(@"select p.ProductId,p.Name, p.Price, p.PictureName, p.CreatedOn,p.CreatedBy, p.ModifiedOn, p.ModifiedBy, p.IsActive from dbo.Products p,dbo.Orders ord, dbo.ProductOrderMapping map
+WHERE map.ProductId=p.ProductId AND ord.OrderId=map.OrderId AND ord.OrderId={0}", OrderId);
+
+                    SqlCommand cmd = new SqlCommand(sqlQuery);
+
+                    var reader = helper.ExecuteReader(sqlQuery);
+                  
+                    List<ProductDTO> list = new List<ProductDTO>();
+
+                    while (reader.Read())
+                    {
+                        var dto = FillDTO(reader);
+                        if (dto != null)
+                        {
+                            list.Add(dto);
+                        }
+                    }
+
+                    return ResponseResult.GetSuccessObject(list);
+
+                }
+            }
+            catch (Exception exp)
+            {
+                return ResponseResult.GetErrorObject();
+            }
+        }
+
         public static ResponseResult DeleteProduct(int id)
         {
             try
@@ -202,7 +238,6 @@ namespace PMS.DAL
             dto.IsActive = reader.GetBoolean(8);
             return dto;
         }
-
-
+        
     }
 }

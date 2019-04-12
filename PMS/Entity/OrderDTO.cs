@@ -10,11 +10,17 @@ namespace PMS.Entity
         public int OrderId { get; set; }
         public String OrderNum { get; set; }
         public int OrderBy { get; set; }
+        public String OrderByName { get; set; }
         public DateTime CreatedOn { get; set; }
         public Boolean IsPaid { get; set; }
         public double TotalAmount { get; set; }
         public Boolean IsActive { get; set; }
-        public int OrderStatus { get; set; }
+        public String OrderStatus { get; set; }
 
+    }
+
+    public class OrderDetails:OrderDTO
+    {
+        public List<ProductDTO> productList { get; set; }
     }
 }

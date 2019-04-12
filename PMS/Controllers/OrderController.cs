@@ -12,28 +12,34 @@ namespace PMS.Controllers
     public class OrderController : ApiController
     {
         [HttpGet]
-        public ResponseResult Get()
+        public ResponseResult GetOrders()
         {
             var a = OrderBO.GetAllOrders();
             return a;
         }
 
         [HttpGet]
-        public ResponseResult Save()
+        public ResponseResult SaveOrder()
         {
             var a = OrderBO.SaveOrder();
             return a;
         }
 
         [HttpGet]
-        public ResponseResult Del(int id)
+        public ResponseResult CancelOrder(int id)
         {
             var a = OrderBO.DeleteOrder(id);
             return a;
         }
 
         [HttpGet]
-        public ResponseResult GetById(int id)
+        public ResponseResult UpdateOrderStatus(String status, int id)
+        {
+            return OrderBO.UpdateOrderStatus(status, id);
+        }
+
+        [HttpGet]
+        public ResponseResult GetOrderById(int id)
         {
             var a = OrderBO.GetOrderById(id);
             return a;

@@ -9,33 +9,40 @@ using System.Web.Http;
 
 namespace PMS.Controllers
 {
-    public class ValuesController : ApiController
+    public class ProductController : ApiController
     {
         [HttpGet]
-        public ResponseResult Get()
+        public ResponseResult GetAllProducts()
         {
             var a = ProductBO.GetAllProducts();
             return a;
         }
 
         [HttpGet]
-        public ResponseResult Save()
+        public ResponseResult AddNewProduct()
         {
             var a = ProductBO.Save();
             return a;
         }
 
         [HttpGet]
-        public ResponseResult Del(int id)
+        public ResponseResult DeleteProduct(int id)
         {
             var a = ProductBO.DeleteProduct(id);
             return a;
         }
 
         [HttpGet]
-        public ResponseResult GetById(int id)
+        public ResponseResult GetProductById(int id)
         {
             var a = ProductBO.GetProductById(id);
+            return a;
+        }
+
+        [HttpGet]
+        public ResponseResult GetProductsByOrderId(int id)
+        {
+            var a = ProductBO.GetProductsByOrderId(id);
             return a;
         }
     }

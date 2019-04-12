@@ -9,20 +9,20 @@ namespace PMS.DAL
 {
     public class OrderDAO
     {
-        public static ResponseResult SaveOrder(OrderDTO dto)
+        public static ResponseResult SaveOrder(OrderDetails dto)
         {
             using (DBHelper helper = new DBHelper())
             {
                 String sqlQuery = "";
                 if (dto.OrderId > 0)
                 {
-                    //sqlQuery = String.Format(@"Update dbo.Products Set Name=@name,Price=@price,PictureName=@picname,ModifiedOn=@modifiedon,ModifiedBy=@modifiedby Where ProductID=@pid");
+                    //sqlQuery = String.Format(@"Update dbo.Products Set Name=@name,Price=@price,PictureName=@picname,ModifiedOn=@modifiedon,ModifiedBy=@modifiedby Where ProductId=@pid");
                     //SqlCommand cmd = new SqlCommand(sqlQuery);
 
                     //SqlParameter parm = new SqlParameter();
                     //parm.ParameterName = "name";
                     //parm.SqlDbType = System.Data.SqlDbType.VarChar;
-                    //parm.Value = dto.Name;
+                    //parm.Value = dto.;
                     //cmd.Parameters.Add(parm);
 
                     //parm = new SqlParameter();
@@ -109,8 +109,18 @@ namespace PMS.DAL
                     cmd.Parameters.Add(parm);
                     
                     Object obj = helper.ExecuteScalarParm(cmd);
-                    int rv = Convert.ToInt32(obj);
-                    return ResponseResult.GetSuccessObject(rv);
+                    int orderId = Convert.ToInt32(obj);
+                    if (dto.productList != null)
+                    {
+                        for (int i = 0; i < dto.productList.Count; i++)
+                        {
+                            int prodId = ProductDAO.Save(dto.productList[i]);
+                            sqlQuery = String.Format(@"INSERT INTO dbo.ProductOrderMapping(OrderId,ProductId) 
+                            VALUES ({0},{1});", orderId, prodId);
+                            int a = helper.ExecuteQuery(sqlQuery);
+                        }
+                    }
+                    return ResponseResult.GetSuccessObject();
                 }
             }
         }
@@ -120,7 +130,7 @@ namespace PMS.DAL
         {
             try
             {
-                var query = "Select OrderId,OrderNum, OrderBy, CreatedOn,IsPaid, TotalAmount,IsActive,OrderStatus from dbo.Orders Where IsActive = 1";
+                var query = "Select ord.OrderId,ord.OrderNum, ord.OrderBy,u.Name, ord.CreatedOn,ord.IsPaid, ord.TotalAmount,ord.IsActive,ord.OrderStatus from dbo.Orders ord,dbo.Users u Where ord.OrderBy=u.UserId AND ord.IsActive = 1";
 
                 using (DBHelper helper = new DBHelper())
                 {
@@ -145,14 +155,14 @@ namespace PMS.DAL
             }
         }
 
-        public static ResponseResult GetOrderById(int pid)
+        public static ResponseResult GetOrderById(int OrderId)
         {
             var sqlQuery = "";
             try
             {
                 using (DBHelper helper = new DBHelper())
                 {
-                    sqlQuery = String.Format(@"Select * from dbo.Orders Where OrderId='{0}'", pid);
+                    sqlQuery = String.Format(@"Select ord.OrderId,ord.OrderNum, ord.OrderBy,u.Name, ord.CreatedOn,ord.IsPaid, ord.TotalAmount,ord.IsActive,ord.OrderStatus from dbo.Orders ord,dbo.Users u Where ord.OrderBy=u.UserId AND ord.IsActive = 1 AND OrderId='{0}'", OrderId);
 
                     SqlCommand cmd = new SqlCommand(sqlQuery);
                     
@@ -192,19 +202,36 @@ namespace PMS.DAL
             }
         }
 
+        public static ResponseResult UpdateOrderStatus(String status,int id)
+        {
+            String sqlQuery = String.Format(@"Update dbo.Orders Set OrderStatus={0} Where OrderId={1}",status, id);
+            try
+            {
+                using (DBHelper helper = new DBHelper())
+                {
+                    SqlCommand cmd = new SqlCommand(sqlQuery);
+                    var rv = helper.ExecuteQuery(sqlQuery);
+                    return ResponseResult.GetSuccessObject(rv);
+                }
+            }
+            catch (Exception exp)
+            {
+                return ResponseResult.GetErrorObject("Some error has occured!" + exp);
+            }
+        }
         private static OrderDTO FillDTO(SqlDataReader reader)
         {
             var dto = new OrderDTO();
             dto.OrderId = reader.GetInt32(0);
             dto.OrderNum = reader.GetString(1);
             dto.OrderBy = reader.GetInt32(2);
-            dto.CreatedOn = reader.GetDateTime(3);
-            dto.IsPaid = reader.GetBoolean(4);
-            dto.TotalAmount = reader.GetFloat(5);
-            dto.IsActive = reader.GetBoolean(6);
-            dto.OrderStatus = reader.GetInt32(7);
+            dto.OrderByName = reader.GetString(3);
+            dto.CreatedOn = reader.GetDateTime(4);
+            dto.IsPaid = reader.GetBoolean(5);
+            dto.TotalAmount = reader.GetFloat(6);
+            dto.IsActive = reader.GetBoolean(7);
+            dto.OrderStatus = reader.GetString(8);
             return dto;
         }
-
     }
 }
