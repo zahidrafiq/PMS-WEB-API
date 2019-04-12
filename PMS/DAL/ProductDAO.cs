@@ -135,18 +135,22 @@ namespace PMS.DAL
 
     public static ProductDTO GetProductById(int pid)
         {
-            var sqlQuery = String.Format("Select * from dbo.Products Where ProductId=@pid");
+            var sqlQuery = "" ;
 
             using (DBHelper helper = new DBHelper())
             {
+                sqlQuery = String.Format(@"Select * from dbo.Products Where ProductId='{0}'",pid);
+
                 SqlCommand cmd = new SqlCommand(sqlQuery);
 
-                SqlParameter parm = new SqlParameter();
-                parm.ParameterName = "pid";
-                parm.SqlDbType = System.Data.SqlDbType.Int;
-                parm.Value = pid;
-                cmd.Parameters.Add(parm);
-
+                //SqlParameter parm = new SqlParameter();
+                //parm.ParameterName = "k";
+                //parm.SqlDbType = System.Data.SqlDbType.VarChar;
+                //parm.Value = 1;
+                //cmd.Parameters.Add(parm);
+                
+                //cmd.Parameters.AddWithValue("id", pid);
+                
                 var reader = helper.ExecuteReader(sqlQuery);
 
                 ProductDTO dto = null;
@@ -162,17 +166,11 @@ namespace PMS.DAL
 
         public static int DeleteProduct(int id)
         {
-            String sqlQuery = String.Format(@"Update dbo.Products Set IsActive=0 Where ProductId=@pid");
+            String sqlQuery = String.Format(@"Update dbo.Products Set IsActive=0 Where ProductId={0}",id);
 
             using (DBHelper helper = new DBHelper())
             {
                 SqlCommand cmd = new SqlCommand(sqlQuery);
-
-                SqlParameter parm = new SqlParameter();
-                parm.ParameterName = "pid";
-                parm.SqlDbType = System.Data.SqlDbType.Int;
-                parm.Value = id;
-                cmd.Parameters.Add(parm);
                 
                 return helper.ExecuteQuery(sqlQuery);
             }

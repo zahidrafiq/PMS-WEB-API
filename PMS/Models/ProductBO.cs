@@ -1,11 +1,10 @@
-﻿using PMS.DAL;
-using PMS.Entity;
+﻿using PMS.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace PMS.BAL
+namespace PMS.Models
 {
     public class ProductBO
     {
@@ -18,7 +17,7 @@ namespace PMS.BAL
             dto.IsActive = true;
             dto.CreatedBy = 1;
             dto.CreatedOn = DateTime.Now;
-           
+
             return PMS.DAL.ProductDAO.Save(dto);
         }
         public static ProductDTO GetProductById(int pid)

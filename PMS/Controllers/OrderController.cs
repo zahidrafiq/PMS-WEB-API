@@ -8,37 +8,30 @@ using System.Web.Http;
 
 namespace PMS.Controllers
 {
-    public class ValuesController : ApiController
+    public class OrderController : ApiController
     {
-        
-        // GET api/values/5
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-        
         [HttpGet]
         public void Get()
         {
-            var a = ProductBO.GetAllProducts();
+            var a = OrderBO.GetAllOrders();
         }
 
         [HttpGet]
         public void Save()
         {
-            var a = ProductBO.Save();
+            var a = OrderBO.SaveOrder();
         }
 
         [HttpGet]
         public void Del(int id)
         {
-            var a = ProductBO.DeleteProduct(id);
+            var a = OrderBO.DeleteOrder(id);
         }
 
         [HttpGet]
         public void GetById(int id)
         {
-            var a = ProductBO.GetProductById(id);
+            var a = OrderBO.GetOrderById(id);
         }
     }
 }
